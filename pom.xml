@@ -17,7 +17,7 @@
 			<version>9.4.1.v20170120</version>
 		</dependency>
 	</dependencies>
-	<name>embedded-jetty-example</name>
+	<name>tccf</name>
 	<build>
 		<plugins>
 			<plugin>

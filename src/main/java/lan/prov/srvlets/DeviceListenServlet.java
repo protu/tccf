@@ -14,41 +14,28 @@ import lan.prov.tr069.ACSMethods;
 
 public class DeviceListenServlet extends HttpServlet {
 
-	
 	private static final long serialVersionUID = -7084727993099036443L;
 
-	public String getPostData(HttpServletRequest request) throws IOException {
-	    StringBuilder sb = new StringBuilder();
-	        BufferedReader reader = request.getReader();
-	        reader.mark(10000);
-
-	        String line;
-	        do {
-	            line = reader.readLine();
-	            sb.append(line).append("\n");
-	        } while (line != null);
-	        reader.reset();
-	        // do NOT close the reader here, or you won't be able to get the post data twice
-
-	    return sb.toString();
-	}
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		DeviceMessageParse deviceMessageParse = new DeviceMessageParse(request);
-		ACSMethods acsMethods = new ACSMethods();
-		response.setContentType("text/xml; charset=utf-8");
+		int contentLength = request.getContentLength();
+		if (contentLength < 1) {
+			response.setStatus(HttpServletResponse.SC_OK);
+			response.getWriter().write("");
+			return;
+		}
 		try {
+			DeviceMessageParse deviceMessageParse = new DeviceMessageParse(request);
+			ACSMethods acsMethods = new ACSMethods();
+			response.setContentType("text/xml; charset=utf-8");
 			String sessionID = deviceMessageParse.getSessionID();
 			SOAPMessage soapResponse = acsMethods.informResponse(sessionID);
 			OutputStream respOut = response.getOutputStream();
 			soapResponse.writeTo(respOut);
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		
+
 	}
-	
-	
-	
+
 }
