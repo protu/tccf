@@ -50,8 +50,8 @@ public class SoapClient {
 			
 			SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
 			SOAPConnection soapConnection = soapConnectionFactory.createConnection();
-			URL endpoing = new URL("http://localhost:10301/acs/croatia/ULL");
-			SOAPMessage response = soapConnection.call(soapMessage, endpoing);
+			URL endpoint = new URL("http://localhost:10301/acs/croatia/ULL");
+			SOAPMessage response = soapConnection.call(soapMessage, endpoint);
 			soapConnection.close();
 			
 			response.writeTo(System.out);
