@@ -23,14 +23,17 @@ public class DeviceListenServlet extends HttpServlet {
 			DeviceMessageParse deviceMessageParse = new DeviceMessageParse(request);
 			ACSMethods acsMethods = new ACSMethods();
 			String sessionID = deviceMessageParse.getSessionID();
-			if (sessionID == "") {
+			HttpSession session = request.getSession(true);
+			if (sessionID == "" && session.isNew()) {
 				response.setContentType("text/html); charset=utf-8");
 				response.getWriter().write(sessionID);
+			} else if (sessionID == "") {
+				sessionID = (String) session.getAttribute("cwmpSessionID");
 			} else {
+				session.setAttribute("cwmpSessionID", sessionID);
 				response.setContentType("text/xml; charset=utf-8");
 				SOAPMessage soapResponse = acsMethods.informResponse(sessionID);
 				OutputStream respOut = response.getOutputStream();
-				HttpSession session = request.getSession(true);
 				soapResponse.writeTo(respOut);
 			}
 		} catch (Exception e) {
