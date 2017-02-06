@@ -27,16 +27,19 @@ public class DeviceMessageParse {
 		try {
 			MessageFactory msgFact = MessageFactory.newInstance();
 			InputStream inStream = request.getInputStream();
+			if (inStream.available() == 0) {
+				return "";
+			}
 			SOAPMessage soapMessage = msgFact.createMessage(new MimeHeaders(), inStream);
 			SOAPHeader soapHead = soapMessage.getSOAPHeader();
 			String sessionID = soapHead.getTextContent();
 			return sessionID;
 		} catch (SOAPException e) {
-			e.printStackTrace();
+			return "";
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return null;
+		return "";
 	}
 
 }

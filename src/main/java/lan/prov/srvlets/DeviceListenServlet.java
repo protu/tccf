@@ -1,12 +1,12 @@
 package lan.prov.srvlets;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.OutputStream;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.xml.soap.SOAPMessage;
 
 import lan.prov.parse.DeviceMessageParse;
@@ -18,22 +18,23 @@ public class DeviceListenServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		int contentLength = request.getContentLength();
-		if (contentLength < 1) {
-			response.setStatus(HttpServletResponse.SC_OK);
-			response.getWriter().write("");
-			return;
-		}
+
 		try {
 			DeviceMessageParse deviceMessageParse = new DeviceMessageParse(request);
 			ACSMethods acsMethods = new ACSMethods();
-			response.setContentType("text/xml; charset=utf-8");
 			String sessionID = deviceMessageParse.getSessionID();
-			SOAPMessage soapResponse = acsMethods.informResponse(sessionID);
-			OutputStream respOut = response.getOutputStream();
-			soapResponse.writeTo(respOut);
-		} catch (Exception ex) {
-			ex.printStackTrace();
+			if (sessionID == "") {
+				response.setContentType("text/html); charset=utf-8");
+				response.getWriter().write(sessionID);
+			} else {
+				response.setContentType("text/xml; charset=utf-8");
+				SOAPMessage soapResponse = acsMethods.informResponse(sessionID);
+				OutputStream respOut = response.getOutputStream();
+				HttpSession session = request.getSession(true);
+				soapResponse.writeTo(respOut);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 	}
