@@ -2,6 +2,8 @@ package lan.prov.srvlets;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,10 +25,10 @@ public class DeviceListenServlet extends HttpServlet {
 
 		try {
 			DeviceMessageParse deviceMessageParse = new DeviceMessageParse(request);
-			ACSMethods acsMethods = new ACSMethods();
 			String sessionID = deviceMessageParse.getSessionID();
 			String responseType = deviceMessageParse.getResponseType();
 			HttpSession session = request.getSession(true);
+			ACSMethods acsMethods = new ACSMethods();
 
 			// Prazan HTTP zahtjev i nova sesija - nije TR069 - odgovori sa 400
 			if (sessionID == "" && session.isNew()) {
@@ -36,31 +38,42 @@ public class DeviceListenServlet extends HttpServlet {
 				if (session != null) {
 					session.invalidate();
 				}
-				// Postoji HTTP sesija ali je prazan SOAP sesionID - vraćen je
-				// prazan odgovor i moze se postaviti upit
-			} else if (sessionID == "" && !session.isNew()) {
-				sessionID = (String) session.getAttribute("cwmpSessionID");
-				session.setAttribute("cwmpSessionID", sessionID);
-				response.setContentType("text/xml; charset=utf-8");
-				SOAPMessage soapResponse = acsMethods.getParameterNames("InternetGatewayDevice.X_000E50_Firewall.",
-						sessionID);
-				OutputStream respOut = response.getOutputStream();
-				soapResponse.writeTo(respOut);
-				// Inicijalni inform ima sessionID u zahtjevu ali nije kreirana
-				// HTTP sesija. Potrebno je vratiti inform response
-			} else if (sessionID != "" && session.isNew()) {
+				// Uredjaj je otvorio novu sesiju sa inform porukom
+			} else if (sessionID != "" && session.isNew() && responseType.equals("Inform")) {
 				session.setAttribute("cwmpSessionID", sessionID);
 				response.setContentType("text/xml; charset=utf-8");
 				SOAPMessage soapResponse = acsMethods.informResponse(sessionID);
 				OutputStream respOut = response.getOutputStream();
 				soapResponse.writeTo(respOut);
-			} else if (sessionID != "" && !session.isNew() && responseType != "") {
+				// Postoji HTTP sesija ali je prazan SOAP sesionID - vraćen je
+				// prazan odgovor na inform response i mogu se posaviti parametri
+			} else if (sessionID == "" && !session.isNew()) {
+				sessionID = (String) session.getAttribute("cwmpSessionID");
+				session.setAttribute("cwmpSessionID", sessionID);
+				response.setContentType("text/xml; charset=utf-8");
+				Map<String, String> firewallRule = new HashMap<String, String>();
+				firewallRule.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.1.SourceIP", "10.0.0.0");
+				firewallRule.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.1.SourceIPMask", "255.0.0.0");
+				SOAPMessage soapResponse = acsMethods.setParameterValues(firewallRule, sessionID);
+				OutputStream respOut = response.getOutputStream();
+				soapResponse.writeTo(respOut);
+				// Parametri su postavljeni, trazimo nove podatke
+			} else if (sessionID != "" && !session.isNew() && responseType.equals("SetParameterValuesResponse")) {
+				sessionID = (String) session.getAttribute("cwmpSessionID");
+				session.setAttribute("cwmpSessionID", sessionID);
+				response.setContentType("text/xml; charset=utf-8");
+				SOAPMessage soapResponse = acsMethods
+						.getParameterValues("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.", sessionID);
+				OutputStream respOut = response.getOutputStream();
+				soapResponse.writeTo(respOut);
+				// Podaci poslani, zavrsi sesiju
+			} else if (sessionID != "" && !session.isNew() && responseType.equals("GetParameterValuesResponse")) {
 				response.setStatus(HttpStatus.OK_200);
+			} else {
+				response.setStatus(HttpStatus.BAD_REQUEST_400);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
-
 }
