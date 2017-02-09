@@ -51,8 +51,8 @@ public class DeviceListenServlet extends HttpServlet {
 				sessionID = (String) session.getAttribute("cwmpSessionID");
 				response.setContentType("text/xml; charset=utf-8");
 				Map<String, String> spvList = new HashMap<String, String>();
-				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.1.SourceIP", "10.0.0.0");
-				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.1.SourceIPMask", "255.0.0.0");
+//				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.1.SourceIP", "10.0.0.0");
+//				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.1.SourceIPMask", "255.0.0.0");
 				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.3.SourceIP", "10.0.0.0");
 				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.3.SourceIPMask", "255.0.0.0");
 				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.4.SourceIP", "10.0.0.0");
