@@ -58,8 +58,9 @@ public class DeviceListenServlet extends HttpServlet {
 				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.4.SourceIP", "10.0.0.0");
 				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.4.SourceIPMask", "255.0.0.0");
 				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.5.SourceIP", "10.0.0.0");
-				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.6.SourceIPMask", "255.0.0.0");
+				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.5.SourceIPMask", "255.0.0.0");
 				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.6.SourceIP", "10.0.0.0");
+				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.6.SourceIPMask", "255.0.0.0");
 				spvList.put("InternetGatewayDevice.ManagementServer.URL", "http://10.253.47.5:57003/cwmpWeb/WGCPEMgt");
 				SOAPMessage soapResponse = acsMethods.setParameterValues(spvList, sessionID);
 				OutputStream respOut = response.getOutputStream();
