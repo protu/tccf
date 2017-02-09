@@ -49,26 +49,37 @@ public class DeviceListenServlet extends HttpServlet {
 				// prazan odgovor na inform response i mogu se posaviti parametri
 			} else if (sessionID == "" && !session.isNew()) {
 				sessionID = (String) session.getAttribute("cwmpSessionID");
-				session.setAttribute("cwmpSessionID", sessionID);
 				response.setContentType("text/xml; charset=utf-8");
-				Map<String, String> firewallRule = new HashMap<String, String>();
-				firewallRule.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.1.SourceIP", "10.0.0.0");
-				firewallRule.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.1.SourceIPMask", "255.0.0.0");
-				SOAPMessage soapResponse = acsMethods.setParameterValues(firewallRule, sessionID);
+				Map<String, String> spvList = new HashMap<String, String>();
+				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.1.SourceIP", "10.0.0.0");
+				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.1.SourceIPMask", "255.0.0.0");
+				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.3.SourceIP", "10.0.0.0");
+				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.3.SourceIPMask", "255.0.0.0");
+				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.4.SourceIP", "10.0.0.0");
+				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.4.SourceIPMask", "255.0.0.0");
+				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.5.SourceIP", "10.0.0.0");
+				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.6.SourceIPMask", "255.0.0.0");
+				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.6.SourceIP", "10.0.0.0");
+				spvList.put("InternetGatewayDevice.ManagementServer.URL", "http://10.253.47.5:57003/cwmpWeb/WGCPEMgt");
+				SOAPMessage soapResponse = acsMethods.setParameterValues(spvList, sessionID);
 				OutputStream respOut = response.getOutputStream();
 				soapResponse.writeTo(respOut);
-				// Parametri su postavljeni, trazimo nove podatke
+//				// Parametri su postavljeni, trazimo nove podatke
+//			} else if (sessionID != "" && !session.isNew() && responseType.equals("SetParameterValuesResponse")) {
+//				sessionID = (String) session.getAttribute("cwmpSessionID");
+//				response.setContentType("text/xml; charset=utf-8");
+//				SOAPMessage soapResponse = acsMethods
+//						.getParameterValues("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.", sessionID);
+//				OutputStream respOut = response.getOutputStream();
+//				soapResponse.writeTo(respOut);
+//				// Podaci poslani, zavrsi sesiju
+//			} else if (sessionID != "" && !session.isNew() && responseType.equals("GetParameterValuesResponse")) {
 			} else if (sessionID != "" && !session.isNew() && responseType.equals("SetParameterValuesResponse")) {
-				sessionID = (String) session.getAttribute("cwmpSessionID");
-				session.setAttribute("cwmpSessionID", sessionID);
-				response.setContentType("text/xml; charset=utf-8");
-				SOAPMessage soapResponse = acsMethods
-						.getParameterValues("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.", sessionID);
-				OutputStream respOut = response.getOutputStream();
-				soapResponse.writeTo(respOut);
-				// Podaci poslani, zavrsi sesiju
-			} else if (sessionID != "" && !session.isNew() && responseType.equals("GetParameterValuesResponse")) {
 				response.setStatus(HttpStatus.OK_200);
+				request.getSession(false);
+				if (session != null) {
+					session.invalidate();
+				}
 			} else {
 				response.setStatus(HttpStatus.BAD_REQUEST_400);
 			}
