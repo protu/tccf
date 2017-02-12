@@ -2,17 +2,26 @@ package lan.prov.parse;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.namespace.QName;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPBodyElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
 
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 public class DeviceMessageParse {
 	
 	private HttpServletRequest request;
+	private String responseType = "";
+	private String productClass = "";
 
 	public DeviceMessageParse(HttpServletRequest request) {
 		this.request = request;
@@ -22,6 +31,18 @@ public class DeviceMessageParse {
 		return getSessionID(request);
 	}
 	
+	public String getResponseType() {
+		return responseType;
+	}
+
+	public String getProductClass() {
+		return productClass;
+	}
+
+	public void setProductClass(String productClass) {
+		this.productClass = productClass;
+	}
+
 	public String getSessionID(HttpServletRequest request) {
 		
 		try {
@@ -33,6 +54,15 @@ public class DeviceMessageParse {
 			SOAPMessage soapMessage = msgFact.createMessage(new MimeHeaders(), inStream);
 			SOAPHeader soapHead = soapMessage.getSOAPHeader();
 			String sessionID = soapHead.getTextContent();
+			SOAPBody soapBody = soapMessage.getSOAPBody();
+			Node element = soapBody.getFirstChild();
+			responseType = element.getNextSibling().getLocalName();
+			if (responseType.equals("Inform")) {
+				NodeList nlProductClass = soapBody.getElementsByTagName("ProductClass");
+				Node nProductclass = nlProductClass.item(0);
+				String sProductClass = nProductclass != null ? nProductclass.getTextContent() : "";
+				setProductClass(sProductClass);
+			}
 			return sessionID;
 		} catch (SOAPException e) {
 			return "";
