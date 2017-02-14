@@ -28,6 +28,7 @@ public class DeviceListenServlet extends HttpServlet {
 			String sessionID = deviceMessageParse.getSessionID();
 			String responseType = deviceMessageParse.getResponseType();
 			String productClass = deviceMessageParse.getProductClass();
+			String OUI = deviceMessageParse.getOUI();
 			HttpSession session = request.getSession(true);
 			ACSMethods acsMethods = new ACSMethods();
 
@@ -65,7 +66,7 @@ public class DeviceListenServlet extends HttpServlet {
 				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.6.SourceIP", "10.0.0.0");
 				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.6.SourceIPMask", "255.0.0.0");
 				spvList.put("InternetGatewayDevice.ManagementServer.URL", "http://10.253.47.5:57003/cwmpWeb/WGCPEMgt");
-				if (productClass.equals("MediaAccess TG788vn v2")){
+				if (productClass.equals("MediaAccess TG788vn v2") && OUI.equals("30918F")){
 					spvList.put("InternetGatewayDevice.ManagementServer.Username", "administrator");
 					spvList.put("InternetGatewayDevice.ManagementServer.Password", "EpC71249HgUH16KX9821Lu");
 				}

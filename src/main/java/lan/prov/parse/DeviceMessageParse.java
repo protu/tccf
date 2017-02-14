@@ -22,6 +22,7 @@ public class DeviceMessageParse {
 	private HttpServletRequest request;
 	private String responseType = "";
 	private String productClass = "";
+	private String OUI = "";
 
 	public DeviceMessageParse(HttpServletRequest request) {
 		this.request = request;
@@ -39,8 +40,17 @@ public class DeviceMessageParse {
 		return productClass;
 	}
 
+
 	public void setProductClass(String productClass) {
 		this.productClass = productClass;
+	}
+
+	public String getOUI() {
+		return OUI;
+	}
+	
+	public void setOUI(String oUI) {
+		OUI = oUI;
 	}
 
 	public String getSessionID(HttpServletRequest request) {
@@ -62,6 +72,10 @@ public class DeviceMessageParse {
 				Node nProductclass = nlProductClass.item(0);
 				String sProductClass = nProductclass != null ? nProductclass.getTextContent() : "";
 				setProductClass(sProductClass);
+				NodeList nlOUI = soapBody.getElementsByTagName("OUI");
+				Node nOUI = nlOUI.item(0);
+				String sOUI = nOUI != null ? nOUI.getTextContent() : "";
+				setOUI(sOUI);
 			}
 			return sessionID;
 		} catch (SOAPException e) {
