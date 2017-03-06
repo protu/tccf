@@ -62,16 +62,19 @@ public class DeviceListenServlet extends HttpServlet {
 				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.5.SourceIPMask", "255.0.0.0");
 				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.6.SourceIP", "10.0.0.0");
 				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.6.SourceIPMask", "255.0.0.0");
-				if (productClass.equals("SpeedTouch780") && OUI.equals("001F9F")) {
-					spvList.put("InternetGatewayDevice.ManagementServer.URL",
-							"http://10.253.47.5:7023/test");
-				} else {
-					spvList.put("InternetGatewayDevice.ManagementServer.URL",
-							"http://10.253.47.5:57003/cwmpWeb/WGCPEMgt");
+				if (productClass.equals("SpeedTouch 780")) {
+					spvList.put("InternetGatewayDevice.ManagementServer.URL", "http://10.253.47.5:7023/test");
 				}
-				if (productClass.equals("MediaAccess TG788vn v2") && OUI.equals("30918F")) {
+				else if (productClass.equals("Thomson TG782 AMIS")) {
+					spvList.put("InternetGatewayDevice.ManagementServer.URL", "http://10.253.47.5:57023/test");
+				}
+				else if (productClass.equals("MediaAccess TG788vn v2")) {
+					spvList.put("InternetGatewayDevice.ManagementServer.URL", "http://10.253.47.5:57023/test");
 					spvList.put("InternetGatewayDevice.ManagementServer.Username", "administrator");
 					spvList.put("InternetGatewayDevice.ManagementServer.Password", "EpC71249HgUH16KX9821Lu");
+				}
+				else {
+					spvList.put("InternetGatewayDevice.ManagementServer.URL", "http://10.253.47.5:57003/cwmpWeb/WGCPEMgt");
 				}
 				SOAPMessage soapResponse = acsMethods.setParameterValues(spvList, sessionID);
 				OutputStream respOut = response.getOutputStream();
