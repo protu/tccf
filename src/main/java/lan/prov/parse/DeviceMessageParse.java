@@ -2,14 +2,11 @@ package lan.prov.parse;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.namespace.QName;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPBodyElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
@@ -52,7 +49,7 @@ public class DeviceMessageParse {
 	public void setOUI(String oUI) {
 		OUI = oUI;
 	}
-
+	
 	public String getSessionID(HttpServletRequest request) {
 		
 		try {
