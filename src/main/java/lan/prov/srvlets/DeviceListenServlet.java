@@ -73,7 +73,7 @@ public class DeviceListenServlet extends HttpServlet {
 				if (productClass.equals("SpeedTouch 780")) {
 					spvList.put("InternetGatewayDevice.ManagementServer.URL", "http://10.253.47.5:7023/test");
 				}
-				else if (productClass.equals("Thomson TG782 AMIS")) {
+				else if (productClass.equals("Thomson TG782")) {
 					spvList.put("InternetGatewayDevice.ManagementServer.URL", "http://10.253.47.5:57023/test");
 				}
 				else if (productClass.equals("MediaAccess TG788vn v2")) {
