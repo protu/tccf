@@ -1,12 +1,9 @@
 package lan.prov.srvlets;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServlet;
@@ -37,7 +34,11 @@ public class DeviceListenServlet extends HttpServlet {
 			ACSMethods acsMethods = new ACSMethods();
 			
 			ServletContext context = getServletContext();
-			context.log(sessionID + ": " + responseType + " from: \"" + OUI + "-" + productClass + "\"");
+			String logString = sessionID + ":" + responseType;
+			if (!OUI.isEmpty() || !productClass.isEmpty()) {
+				logString += " from: \"" + OUI + " - " + productClass + "\"";
+			}
+			context.log(logString);
 //			context.log(deviceMessageParse.getRequestBody());
 
 			if (sessionID == "" && session.isNew()) {
