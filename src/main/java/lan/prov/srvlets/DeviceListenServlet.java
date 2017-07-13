@@ -82,6 +82,10 @@ public class DeviceListenServlet extends HttpServlet {
 					spvList.put("InternetGatewayDevice.ManagementServer.Username", "administrator");
 					spvList.put("InternetGatewayDevice.ManagementServer.Password", "EpC71249HgUH16KX9821Lu");
 				}
+				else if (productClass.equals("R3621-W2")) {
+					spvList.clear();
+					spvList.put("InternetGatewayDevice.ManagementServer.URL", "http://10.253.47.5:57023/test");
+				}
 				else {
 					spvList.put("InternetGatewayDevice.ManagementServer.URL", "http://10.253.47.5:57003/cwmpWeb/WGCPEMgt");
 				}

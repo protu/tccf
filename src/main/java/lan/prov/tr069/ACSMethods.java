@@ -141,5 +141,14 @@ public class ACSMethods {
 		return soapMessage;
 	}
 	
+	public SOAPMessage reboot(String sessionID) throws Exception {
+		SOAPMessage soapMessage = genericMessage(sessionID);
+		SOAPBody soapBody = soapMessage.getSOAPBody();
+		SOAPElement rbt = soapBody.addChildElement("Reboot", "cwmp");
+		rbt.addChildElement("CommandKey").setValue("brb");
+		
+		return soapMessage;
+	}
+	
 	
 }
