@@ -82,14 +82,19 @@ public class DeviceListenServlet extends HttpServlet {
 					spvList.put("InternetGatewayDevice.ManagementServer.Username", "administrator");
 					spvList.put("InternetGatewayDevice.ManagementServer.Password", "EpC71249HgUH16KX9821Lu");
 				}
-				else if (productClass.equals("R3621-W2")) {
-					spvList.clear();
-					spvList.put("InternetGatewayDevice.ManagementServer.URL", "http://10.253.47.5:57023/test");
-				}
 				else {
 					spvList.put("InternetGatewayDevice.ManagementServer.URL", "http://10.253.47.5:57003/cwmpWeb/WGCPEMgt");
 				}
-				SOAPMessage soapResponse = acsMethods.setParameterValues(spvList, sessionID);
+				SOAPMessage soapResponse;
+				if (productClass.equals("R3621-W2")) {
+//					Map<String, String> spvEltekList = new HashMap<String, String>();
+//					spvEltekList.put("InternetGatewayDevice.ManagementServer.URL", "http://10.253.47.5:57023/test");
+//					soapResponse = acsMethods.setParameterValues(spvEltekList, sessionID);
+					soapResponse = acsMethods.reboot(sessionID);
+				}
+				else {
+					soapResponse = acsMethods.setParameterValues(spvList, sessionID);
+				}
 				OutputStream respOut = response.getOutputStream();
 				soapResponse.writeTo(respOut);
 				// // Parametri su postavljeni, trazimo nove podatke
@@ -106,6 +111,12 @@ public class DeviceListenServlet extends HttpServlet {
 				// } else if (sessionID != "" && !session.isNew() &&
 				// responseType.equals("GetParameterValuesResponse")) {
 			} else if (sessionID != "" && !session.isNew() && responseType.equals("SetParameterValuesResponse")) {
+				response.setStatus(HttpStatus.OK_200);
+				request.getSession(false);
+				if (session != null) {
+					session.invalidate();
+				}
+			} else if (sessionID != "" && !session.isNew() && responseType.equals("RebootResponse")) {
 				response.setStatus(HttpStatus.OK_200);
 				request.getSession(false);
 				if (session != null) {
