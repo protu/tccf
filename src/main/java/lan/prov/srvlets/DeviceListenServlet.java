@@ -32,6 +32,7 @@ public class DeviceListenServlet extends HttpServlet {
 			String OUI = deviceMessageParse.getOUI();
 			HttpSession session = request.getSession(true);
 			ACSMethods acsMethods = new ACSMethods();
+			SOAPMessage soapResponse = null;
 			
 			ServletContext context = getServletContext();
 			String logString = sessionID + ":" + responseType;
@@ -48,7 +49,7 @@ public class DeviceListenServlet extends HttpServlet {
 				session.setAttribute("cwmpSessionID", sessionID);
 				session.setAttribute("productClass", productClass);
 				response.setContentType("text/xml; charset=utf-8");
-				SOAPMessage soapResponse = acsMethods.informResponse(sessionID);
+				soapResponse = acsMethods.informResponse(sessionID);
 				OutputStream respOut = response.getOutputStream();
 				soapResponse.writeTo(respOut);
 				// Postoji HTTP sesija ali je prazan SOAP sesionID - vraćen je
@@ -85,12 +86,11 @@ public class DeviceListenServlet extends HttpServlet {
 				else {
 					spvList.put("InternetGatewayDevice.ManagementServer.URL", "http://10.253.47.5:57003/cwmpWeb/WGCPEMgt");
 				}
-				SOAPMessage soapResponse;
 				if (productClass.equals("R3621-W2")) {
-//					Map<String, String> spvEltekList = new HashMap<String, String>();
-//					spvEltekList.put("InternetGatewayDevice.ManagementServer.URL", "http://10.253.47.5:57023/test");
-//					soapResponse = acsMethods.setParameterValues(spvEltekList, sessionID);
-					soapResponse = acsMethods.reboot(sessionID);
+					Map<String, String> spvEltekList = new HashMap<String, String>();
+					spvEltekList.put("InternetGatewayDevice.ManagementServer.URL", "http://10.253.47.5:57023/test");
+					soapResponse = acsMethods.setParameterValues(spvEltekList, sessionID);
+//					soapResponse = acsMethods.reboot(sessionID);
 				}
 				else {
 					soapResponse = acsMethods.setParameterValues(spvList, sessionID);
