@@ -16,7 +16,7 @@ import javax.xml.soap.SOAPPart;
 public class ACSMethods {
 
 	String sessionID = "";
-	QName qnSoapEncArrayType = new QName("http://schemas.xmlsoap.org/soap/encoding/", "array-Type", "SOAP-ENC");
+	QName qnSoapEncArrayType = new QName("http://schemas.xmlsoap.org/soap/encoding/", "arrayType", "soap-enc");
 	QName qnXsiType = new QName("http://www.w3.org/2001/XMLSchema-instance", "type", "xsi");
 
 	public ACSMethods() {
@@ -49,8 +49,8 @@ public class ACSMethods {
 		envelope.addNamespaceDeclaration("cwmp", "urn:dslforum-org:cwmp-1-0");
 		envelope.addNamespaceDeclaration("xsi", "http://www.w3.org/2001/XMLSchema-instance");
 		envelope.addNamespaceDeclaration("xsd", "http://www.w3.org/2001/XMLSchema");
-		envelope.addNamespaceDeclaration("SOAP-ENV", "http://schemas.xmlsoap.org/soap/envelope/");
-		envelope.addNamespaceDeclaration("SOAP-ENC", "http://schemas.xmlsoap.org/soap/encoding/");
+		envelope.addNamespaceDeclaration("soap-env", "http://schemas.xmlsoap.org/soap/envelope/");
+		envelope.addNamespaceDeclaration("soap-enc", "http://schemas.xmlsoap.org/soap/encoding/");
 
 		// SOAP Header
 		SOAPHeader header = envelope.getHeader();
@@ -113,7 +113,7 @@ public class ACSMethods {
 		SOAPElement seParameterList = spv.addChildElement("ParameterList");
 		
 		String parameterListSize = String.valueOf(parameterList.size());
-		seParameterList.addAttribute(qnSoapEncArrayType, "xsd:string[" + parameterListSize + "]");
+		seParameterList.addAttribute(qnSoapEncArrayType, "cwmp:ParameterValueStruct[" + parameterListSize + "]");
 		
 		for (String parameterValKey : parameterList.keySet()) {
 			SOAPElement seParameterValueStruct = seParameterList.addChildElement("ParameterValueStruct");
@@ -124,6 +124,8 @@ public class ACSMethods {
 			sePvsValue.setValue(parameter[1]);
 			sePvsValue.addAttribute(qnXsiType, "xsd:" + parameter[0]);
 		}
+		
+		spv.addChildElement("ParameterKey").setValue("4323432");
 
 		return soapMessage;
 	}
