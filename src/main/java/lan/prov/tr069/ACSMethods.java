@@ -115,12 +115,14 @@ public class ACSMethods {
 		String parameterListSize = String.valueOf(parameterList.size());
 		seParameterList.addAttribute(qnSoapEncArrayType, "xsd:string[" + parameterListSize + "]");
 		
-		for (String parameter : parameterList.keySet()) {
+		for (String parameterValKey : parameterList.keySet()) {
 			SOAPElement seParameterValueStruct = seParameterList.addChildElement("ParameterValueStruct");
-			seParameterValueStruct.addChildElement("Name").setValue(parameter);
+			seParameterValueStruct.addChildElement("Name").setValue(parameterValKey);
 			SOAPElement sePvsValue = seParameterValueStruct.addChildElement("Value");
-			sePvsValue.setValue(parameterList.get(parameter));
-			sePvsValue.addAttribute(qnXsiType, "xsd:string");
+			String parameterTypeValue = parameterList.get(parameterValKey);
+			String[] parameter = parameterTypeValue.split(":", 2);
+			sePvsValue.setValue(parameter[1]);
+			sePvsValue.addAttribute(qnXsiType, "xsd:" + parameter[0]);
 		}
 
 		return soapMessage;
