@@ -73,22 +73,23 @@ public class DeviceListenServlet extends HttpServlet {
 				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.6.SourceIP", "string:10.0.0.0");
 				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.6.SourceIPMask", "string:255.0.0.0");
 				if (productClass.equals("SpeedTouch 780")) {
-					spvList.put("InternetGatewayDevice.ManagementServer.URL", "string:http://10.253.47.5:7023/test");
+					spvList.put("InternetGatewayDevice.ManagementServer.URL", "string:http://10.243.156.120:7023/Amis/CPEMgt");
 				}
 				else if (productClass.equals("Thomson TG782")) {
-					spvList.put("InternetGatewayDevice.ManagementServer.URL", "string:http://10.253.47.5:57023/test");
+					spvList.put("InternetGatewayDevice.ManagementServer.URL", "string:​​http://10.243.156.120:57023/Amis/WGCPEMgt");
 				}
 				else if (productClass.equals("MediaAccess TG788vn v2")) {
-					spvList.put("InternetGatewayDevice.ManagementServer.URL", "string:http://10.253.47.5:57023/test");
+					spvList.put("InternetGatewayDevice.ManagementServer.URL", "string:​​http://10.243.156.120:57023/Amis/WGCPEMgt");
 					spvList.put("InternetGatewayDevice.ManagementServer.Username", "string:administrator");
 					spvList.put("InternetGatewayDevice.ManagementServer.Password", "string:EpC71249HgUH16KX9821Lu");
 				}
 				else {
-					spvList.put("InternetGatewayDevice.ManagementServer.URL", "string:http://10.253.47.5:57003/cwmpWeb/WGCPEMgt");
+					spvList.put("InternetGatewayDevice.ManagementServer.URL", "string:http://10.243.156.120:7023/Amis/CPEMgt");
 				}
 				if (productClass.equals("R3621-W2")) {
 					Map<String, String> spvEltekList = new HashMap<String, String>();
-					spvEltekList.put("InternetGatewayDevice.ManagementServer.URL", "string:http://10.253.47.5:57023/test");
+//					spvEltekList.put("InternetGatewayDevice.ManagementServer.URL", "string:http://10.253.47.5:57023/test");
+					spvEltekList.put("InternetGatewayDevice.ManagementServer.URL", "string:http://10.243.156.120:7023/Amis/CPEMgt");
 					spvEltekList.put("InternetGatewayDevice.ManagementServer.PeriodicInformInterval", "unsignedInt:120");
 					soapResponse = acsMethods.setParameterValues(spvEltekList, sessionID);
 //					soapResponse = acsMethods.reboot(sessionID);
