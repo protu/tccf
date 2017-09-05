@@ -1,5 +1,7 @@
 package lan.prov;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
 
 import org.eclipse.jetty.server.Server;
@@ -13,11 +15,20 @@ public class EmbeddedJettyMain {
 
 	public static void main(String[] args) throws Exception {
 
-		RolloverFileOutputStream logFileRolloverStream = new RolloverFileOutputStream("log/yyyy_mm_dd_tccf.log", true);
-		PrintStream logFileStream = new PrintStream(logFileRolloverStream);
-		System.setErr(logFileStream);
-		System.setOut(logFileStream);
-		
+		try {
+			File logDir = new File("./log");
+			if (!logDir.exists())
+				new File("./log").mkdir();
+			
+			RolloverFileOutputStream logFileRolloverStream = new RolloverFileOutputStream("log/yyyy_mm_dd_tccf.log",
+					true);
+			PrintStream logFileStream = new PrintStream(logFileRolloverStream);
+			System.setErr(logFileStream);
+			System.setOut(logFileStream);
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
+
 		Server server = new Server(10301);
 		ServletContextHandler handler = new ServletContextHandler(server, "/");
 		SessionHandler sessionHandler = new SessionHandler();
