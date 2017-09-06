@@ -63,7 +63,7 @@ public class DeviceListenServlet extends HttpServlet {
 				// spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.1.SourceIP",
 				// "string:10.0.0.0");
 				// spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.1.SourceIPMask",
-				// "string:l255.0.0.0");
+				// "string:255.0.0.0");
 				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.3.SourceIP", "string:10.0.0.0");
 				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.3.SourceIPMask", "string:255.0.0.0");
 				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.4.SourceIP", "string:10.0.0.0");
@@ -76,10 +76,10 @@ public class DeviceListenServlet extends HttpServlet {
 					spvList.put("InternetGatewayDevice.ManagementServer.URL", "string:http://10.243.156.120:7023/Amis/CPEMgt");
 				}
 				else if (productClass.equals("Thomson TG782")) {
-					spvList.put("InternetGatewayDevice.ManagementServer.URL", "string:​​http://10.243.156.120:57023/Amis/WGCPEMgt");
+					spvList.put("InternetGatewayDevice.ManagementServer.URL", "string:http://10.243.156.120:57023/Amis/WGCPEMgt");
 				}
 				else if (productClass.equals("MediaAccess TG788vn v2")) {
-					spvList.put("InternetGatewayDevice.ManagementServer.URL", "string:​​http://10.243.156.120:57023/Amis/WGCPEMgt");
+					spvList.put("InternetGatewayDevice.ManagementServer.URL", "string:http://10.243.156.120:57023/Amis/WGCPEMgt");
 					spvList.put("InternetGatewayDevice.ManagementServer.Username", "string:administrator");
 					spvList.put("InternetGatewayDevice.ManagementServer.Password", "string:EpC71249HgUH16KX9821Lu");
 				}

@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>lan.prov</groupId>
 	<artifactId>tccf</artifactId>
-	<version>1.0-EMB-PROD</version>
+	<version>1.2-EMB-PROD</version>
 	<packaging>jar</packaging>
 	<dependencies>
 		<dependency>
@@ -15,6 +15,12 @@
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-servlet</artifactId>
 			<version>9.4.5.v20170502</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<name>tccf</name>
@@ -67,28 +73,28 @@
 					</execution>
 				</executions>
 			</plugin>
-			    <plugin>
-        			<groupId>org.apache.maven.plugins</groupId>
-        			<artifactId>maven-compiler-plugin</artifactId>
-       				<version>3.6.2</version>
-					<configuration>
-						<source>1.8</source>
-						<target>1.8</target>
-					</configuration>
-     			</plugin>
-				 <plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-source-plugin</artifactId>
-					<version>3.0.1</version>
-					<executions>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.6.2</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.0.1</version>
+				<executions>
 					<execution>
 						<id>attach-sources</id>
 						<goals>
-						<goal>jar-no-fork</goal>
+							<goal>jar-no-fork</goal>
 						</goals>
 					</execution>
-					</executions>
-				</plugin>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 </project>
