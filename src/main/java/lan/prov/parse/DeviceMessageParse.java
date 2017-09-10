@@ -15,20 +15,27 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class DeviceMessageParse {
-	
-	private HttpServletRequest request;
+
+	private SOAPMessage soapMessage;
 	private String responseType = "";
 	private String productClass = "";
 	private String OUI = "";
+	private String sessionID = "";
+
+	public DeviceMessageParse() {
+	}
 
 	public DeviceMessageParse(HttpServletRequest request) {
-		this.request = request;
+		this.soapMessage = getSOAPMessage(request);
 	}
-	
+
 	public String getSessionID() {
-		return getSessionID(request);
+		if (sessionID == "") {
+			sessionID = parseSOAPMessage(soapMessage);
+		}
+		return sessionID;
 	}
-	
+
 	public String getResponseType() {
 		return responseType;
 	}
@@ -37,7 +44,6 @@ public class DeviceMessageParse {
 		return productClass;
 	}
 
-
 	public void setProductClass(String productClass) {
 		this.productClass = productClass;
 	}
@@ -45,25 +51,55 @@ public class DeviceMessageParse {
 	public String getOUI() {
 		return OUI;
 	}
-	
+
 	public void setOUI(String oUI) {
 		OUI = oUI;
 	}
-	
-	public String getSessionID(HttpServletRequest request) {
-		
+
+	private SOAPMessage getSOAPMessage(HttpServletRequest request) {
+
 		try {
 			MessageFactory msgFact = MessageFactory.newInstance();
 			InputStream inStream = request.getInputStream();
 			if (inStream.available() == 0) {
-				return "";
+				return null;
 			}
 			SOAPMessage soapMessage = msgFact.createMessage(new MimeHeaders(), inStream);
+			return soapMessage;
+		} catch (IOException | SOAPException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public String getSessionID(SOAPMessage soapMessage) {
+			if (soapMessage == null) {
+				return "";
+			}
+			try {
 			SOAPHeader soapHead = soapMessage.getSOAPHeader();
 			String sessionID = soapHead.getTextContent();
+			return sessionID;
+		} catch (SOAPException ex) {
+			ex.printStackTrace();
+		}
+		return "";
+	}
+	
+	public String parseSOAPMessage(SOAPMessage soapMessage) {
+		if (soapMessage == null) {
+			return "";
+		}
+		try {
+			SOAPHeader soapHead = soapMessage.getSOAPHeader();
+			sessionID = soapHead.getTextContent();
 			SOAPBody soapBody = soapMessage.getSOAPBody();
 			Node element = soapBody.getFirstChild();
-			responseType = element.getNextSibling().getLocalName();
+			if (element.getNextSibling() != null) {
+				responseType = element.getNextSibling().getLocalName();
+			} else {
+				return "";
+			}
 			if (responseType.equals("Inform")) {
 				NodeList nlProductClass = soapBody.getElementsByTagName("ProductClass");
 				Node nProductclass = nlProductClass.item(0);
@@ -75,10 +111,8 @@ public class DeviceMessageParse {
 				setOUI(sOUI);
 			}
 			return sessionID;
-		} catch (SOAPException e) {
-			return "";
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (SOAPException ex) {
+			ex.printStackTrace();
 		}
 		return "";
 	}
