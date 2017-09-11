@@ -20,6 +20,7 @@ public class DeviceMessageParse {
 	private String responseType = "";
 	private String productClass = "";
 	private String OUI = "";
+	private String SerialNumber = "";
 	private String sessionID = "";
 
 	public DeviceMessageParse() {
@@ -54,6 +55,14 @@ public class DeviceMessageParse {
 
 	public void setOUI(String oUI) {
 		OUI = oUI;
+	}
+
+	public String getSerialNumber() {
+		return SerialNumber;
+	}
+
+	public void setSerialNumber(String serialNumber) {
+		SerialNumber = serialNumber;
 	}
 
 	private SOAPMessage getSOAPMessage(HttpServletRequest request) {
@@ -109,6 +118,10 @@ public class DeviceMessageParse {
 				Node nOUI = nlOUI.item(0);
 				String sOUI = nOUI != null ? nOUI.getTextContent() : "";
 				setOUI(sOUI);
+				NodeList nlSerialNumber = soapBody.getElementsByTagName("SerialNumber");
+				Node nSerialNumber = nlSerialNumber.item(0);
+				String sSerialNumber = nSerialNumber != null ? nSerialNumber.getTextContent() : "";
+				setSerialNumber(sSerialNumber);
 			}
 			return sessionID;
 		} catch (SOAPException ex) {

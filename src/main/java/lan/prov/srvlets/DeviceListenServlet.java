@@ -41,20 +41,22 @@ public class DeviceListenServlet extends HttpServlet {
 			String responseType = deviceMessageParse.getResponseType();
 			String productClass = deviceMessageParse.getProductClass();
 			String OUI = deviceMessageParse.getOUI();
+			String serialNumber = deviceMessageParse.getSerialNumber();
 			ACSMethods acsMethods = new ACSMethods();
 			SOAPMessage soapResponse = null;
 
 			if (cwmpSessionID != "" && session.isNew() && responseType.equals("Inform")) {
 				
 				String logString = cwmpSessionID + ":" + responseType;
-				if (!OUI.isEmpty() || !productClass.isEmpty()) {
-					logString += " from: \"" + OUI + " - " + productClass + "\"";
+				if (!OUI.isEmpty() || !productClass.isEmpty() || !serialNumber.isEmpty()) {
+					logString += " from: \"" + OUI + "-" + productClass + "-" + serialNumber + "\"";
 				}
 				context.log(logPrefix + logString);
 
 				session.setAttribute("cwmpSessionID", cwmpSessionID);
 				session.setAttribute("productClass", productClass);
 				session.setAttribute("OUI", OUI);
+				session.setAttribute("SerialNumber", serialNumber);
 				response.setContentType("text/xml; charset=utf-8");
 				soapResponse = acsMethods.informResponse(cwmpSessionID);
 				OutputStream respOut = response.getOutputStream();
@@ -69,8 +71,8 @@ public class DeviceListenServlet extends HttpServlet {
 				OUI = (String) session.getAttribute("OUI");
 
 				String logString = cwmpSessionID;
-				if (!OUI.isEmpty() || !productClass.isEmpty()) {
-					logString += " from: \"" + OUI + " - " + productClass + "\"";
+				if (!OUI.isEmpty() || !productClass.isEmpty() || !serialNumber.isEmpty()) {
+					logString += " from: \"" + OUI + "-" + productClass + "-" + serialNumber + "\"";
 				}
 				context.log(logPrefix + logString);
 				
@@ -110,48 +112,22 @@ public class DeviceListenServlet extends HttpServlet {
 					spvTCList.put("InternetGatewayDevice.ManagementServer.Username", "string:administrator");
 					spvTCList.put("InternetGatewayDevice.ManagementServer.Password", "string:EpC71249HgUH16KX9821Lu");
 					soapResponse = acsMethods.setParameterValues(spvTCList, cwmpSessionID);
-				// } else if (productClass.equals("R3621-W2")) {
-				// 	soapResponse = acsMethods.setParameterValues(spvSetACSList, cwmpSessionID);
-				// 	// soapResponse = acsMethods.reboot(sessionID);
+					// Set Encom username and password for ACS
 				} else if (productClass.equals("IAD")) {
 					spvSetACSList.put("InternetGatewayDevice.ManagementServer.Username", "string:administrator");
 					spvSetACSList.put("InternetGatewayDevice.ManagementServer.Password", "string:EpC71249HgUH16KX9821Lu");
 					soapResponse = acsMethods.setParameterValues(spvSetACSList, cwmpSessionID);
-					// soapResponse = acsMethods.reboot(sessionID);
 				} else {
-					// All other devices which are not from Thompson/Techicolor
+					// Send to all other devices URL for preprovisioned devices 
 					soapResponse = acsMethods.setParameterValues(spvSetACSList, cwmpSessionID);
 				}
 				OutputStream respOut = response.getOutputStream();
 				soapResponse.writeTo(respOut);
-				// // Parametri su postavljeni, trazimo nove podatke
-				// } else if (sessionID != "" && !session.isNew() &&
-				// responseType.equals("SetParameterValuesResponse")) {
-				// sessionID = (String) session.getAttribute("cwmpSessionID");
-				// response.setContentType("text/xml; charset=utf-8");
-				// SOAPMessage soapResponse = acsMethods
-				// .getParameterValues("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.",
-				// sessionID);
-				// OutputStream respOut = response.getOutputStream();
-				// soapResponse.writeTo(respOut);
-				// // Podaci poslani, zavrsi sesiju
-				// } else if (sessionID != "" && !session.isNew() &&
-				// responseType.equals("GetParameterValuesResponse")) {
-			} else if (cwmpSessionID != "" && !session.isNew() && responseType.equals("SetParameterValuesResponse")) {
-
-				String logString = cwmpSessionID + ":" + responseType;
-				if (!OUI.isEmpty() || !productClass.isEmpty()) {
-					logString += " from: \"" + OUI + " - " + productClass + "\"";
-				}
-				context.log(logPrefix + logString);
-
-				response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-				request.getSession(false);
-			} else if (cwmpSessionID != "" && !session.isNew() && responseType.equals("RebootResponse")) {
+			} else if (cwmpSessionID != "" && !session.isNew() && responseType.contains("Response")) {
 				
 				String logString = cwmpSessionID + ":" + responseType;
-				if (!OUI.isEmpty() || !productClass.isEmpty()) {
-					logString += " from: \"" + OUI + " - " + productClass + "\"";
+				if (!OUI.isEmpty() || !productClass.isEmpty() || !serialNumber.isEmpty()) {
+					logString += " from: \"" + OUI + "-" + productClass + "-" + serialNumber + "\"";
 				}
 				context.log(logPrefix + logString);
 				

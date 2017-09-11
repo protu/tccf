@@ -16,22 +16,38 @@ import lan.prov.tr069.ClientMethods;
 public class DeviceMessageParseTest {
 
 	DeviceMessageParse parseMsg = new DeviceMessageParse();
-
-
-	@Test
-	public void testGetSessionIDSoapMessage() {
+	SOAPMessage soapMessage = null;
+	
+	public void startParser() {
 		ClientMethods clientMethods = new ClientMethods();
 		GenericDevice device = new GenericDevice();
 		try {
-			SOAPMessage soapMessage = clientMethods.clientPeriodicInform(device);
+			soapMessage = clientMethods.clientPeriodicInform(device);
 			OutputStream output = new ByteArrayOutputStream();
 			soapMessage.writeTo(output);
-//			System.out.println(output.toString());
-			String sessionID = parseMsg.getSessionID(soapMessage);
-			assertEquals("Initial", sessionID);
+			System.out.println(output.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Test
+	public void testGetSessionIDSoapMessage() {
+			startParser();
+			String sessionID = parseMsg.getSessionID(soapMessage);
+			assertEquals("Initial", sessionID);
+	}
+	
+//	@Test
+	public void testGetSerialNUmber() {
+		String serialNumber = parseMsg.getSerialNumber();
+		assertEquals("01DA41AA0001", serialNumber);
+	}
+	
+//	@Test
+	public void testGetProductClass() {
+		String productClass = parseMsg.getProductClass();
+		assertEquals("Soft Device", productClass);
 	}
 
 }
