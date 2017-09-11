@@ -12,8 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.xml.soap.SOAPMessage;
 
-import org.eclipse.jetty.http.HttpStatus;
-
 import lan.prov.parse.DeviceMessageParse;
 import lan.prov.tr069.ACSMethods;
 
@@ -35,7 +33,7 @@ public class DeviceListenServlet extends HttpServlet {
 			// unutar sesije, tada nema smisla nastaviti jer se ne radio o TR069 poruci
 			if (request.getHeader("SOAPAction") == null && session.isNew()) {
 				response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-				context.log(logPrefix + "Not a CWMP message!");
+				context.log(logPrefix + "Not a CWMP request!");
 				return;
 			}
 			DeviceMessageParse deviceMessageParse = new DeviceMessageParse(request);
@@ -46,19 +44,17 @@ public class DeviceListenServlet extends HttpServlet {
 			ACSMethods acsMethods = new ACSMethods();
 			SOAPMessage soapResponse = null;
 
-			String logString = cwmpSessionID + ":" + responseType;
-			if (!OUI.isEmpty() || !productClass.isEmpty()) {
-				logString += " from: \"" + OUI + " - " + productClass + "\"";
-			}
-			context.log(logString);
-			// context.log(deviceMessageParse.getRequestBody());
+			if (cwmpSessionID != "" && session.isNew() && responseType.equals("Inform")) {
+				
+				String logString = cwmpSessionID + ":" + responseType;
+				if (!OUI.isEmpty() || !productClass.isEmpty()) {
+					logString += " from: \"" + OUI + " - " + productClass + "\"";
+				}
+				context.log(logPrefix + logString);
 
-			if (cwmpSessionID == "" && session.isNew()) {
-				response.setContentType("text/html); charset=utf-8");
-				// Uredjaj je otvorio novu sesiju sa inform porukom
-			} else if (cwmpSessionID != "" && session.isNew() && responseType.equals("Inform")) {
 				session.setAttribute("cwmpSessionID", cwmpSessionID);
 				session.setAttribute("productClass", productClass);
+				session.setAttribute("OUI", OUI);
 				response.setContentType("text/xml; charset=utf-8");
 				soapResponse = acsMethods.informResponse(cwmpSessionID);
 				OutputStream respOut = response.getOutputStream();
@@ -67,50 +63,64 @@ public class DeviceListenServlet extends HttpServlet {
 				// prazan odgovor na inform response i mogu se posaviti
 				// parametri
 			} else if (cwmpSessionID == "" && !session.isNew()) {
+
 				cwmpSessionID = (String) session.getAttribute("cwmpSessionID");
 				productClass = (String) session.getAttribute("productClass");
+				OUI = (String) session.getAttribute("OUI");
+
+				String logString = cwmpSessionID;
+				if (!OUI.isEmpty() || !productClass.isEmpty()) {
+					logString += " from: \"" + OUI + " - " + productClass + "\"";
+				}
+				context.log(logPrefix + logString);
+				
 				response.setContentType("text/xml; charset=utf-8");
-				Map<String, String> spvList = new HashMap<String, String>();
+				Map<String, String> spvTCList = new HashMap<String, String>();
 				// spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.1.SourceIP",
 				// "string:10.0.0.0");
 				// spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.1.SourceIPMask",
 				// "string:255.0.0.0");
-				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.3.SourceIP", "string:10.0.0.0");
-				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.3.SourceIPMask", "string:255.0.0.0");
-				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.4.SourceIP", "string:10.0.0.0");
-				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.4.SourceIPMask", "string:255.0.0.0");
-				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.6.SourceIP", "string:10.0.0.0");
-				spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.6.SourceIPMask", "string:255.0.0.0");
+				spvTCList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.3.SourceIP", "string:10.0.0.0");
+				spvTCList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.3.SourceIPMask", "string:255.0.0.0");
+				spvTCList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.4.SourceIP", "string:10.0.0.0");
+				spvTCList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.4.SourceIPMask", "string:255.0.0.0");
+				spvTCList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.6.SourceIP", "string:10.0.0.0");
+				spvTCList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.6.SourceIPMask", "string:255.0.0.0");
+				Map<String, String> spvSetACSList = new HashMap<String, String>();
+				// spvEltekList.put("InternetGatewayDevice.ManagementServer.URL",
+				// "string:http://10.253.47.5:57023/test");
+				spvSetACSList.put("InternetGatewayDevice.ManagementServer.URL",
+						"string:http://10.243.156.120:7023/Amis/CPEMgt");
+				spvSetACSList.put("InternetGatewayDevice.ManagementServer.PeriodicInformInterval",
+						"unsignedInt:120");
 				if (productClass.equals("SpeedTouch 780")) {
-					spvList.put("InternetGatewayDevice.ManagementServer.URL",
+					spvTCList.put("InternetGatewayDevice.ManagementServer.URL",
 							"string:http://10.243.156.120:7023/Amis/CPEMgt");
+					soapResponse = acsMethods.setParameterValues(spvTCList, cwmpSessionID);
 				} else if (productClass.equals("Thomson TG782")) {
-					spvList.put("InternetGatewayDevice.ManagementServer.URL",
-							"string:http://10.243.156.120:57023/Amis/WGCPEMgt");
+					spvTCList.put("InternetGatewayDevice.ManagementServer.URL",
+					"string:http://10.243.156.120:57023/Amis/WGCPEMgt");
+					soapResponse = acsMethods.setParameterValues(spvTCList, cwmpSessionID);
 				} else if (productClass.equals("MediaAccess TG788vn v2")) {
-					spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.5.SourceIP", "string:10.0.0.0");
-					spvList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.5.SourceIPMask",
-							"string:255.0.0.0");
-					spvList.put("InternetGatewayDevice.ManagementServer.URL",
-							"string:http://10.243.156.120:57023/Amis/WGCPEMgt");
-					spvList.put("InternetGatewayDevice.ManagementServer.Username", "string:administrator");
-					spvList.put("InternetGatewayDevice.ManagementServer.Password", "string:EpC71249HgUH16KX9821Lu");
-				} else {
-					spvList.put("InternetGatewayDevice.ManagementServer.URL",
-							"string:http://10.243.156.120:7023/Amis/CPEMgt");
-				}
-				if (productClass.equals("R3621-W2")) {
-					Map<String, String> spvEltekList = new HashMap<String, String>();
-					// spvEltekList.put("InternetGatewayDevice.ManagementServer.URL",
-					// "string:http://10.253.47.5:57023/test");
-					spvEltekList.put("InternetGatewayDevice.ManagementServer.URL",
-							"string:http://10.243.156.120:7023/Amis/CPEMgt");
-					spvEltekList.put("InternetGatewayDevice.ManagementServer.PeriodicInformInterval",
-							"unsignedInt:120");
-					soapResponse = acsMethods.setParameterValues(spvEltekList, cwmpSessionID);
+					spvTCList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.5.SourceIP", "string:10.0.0.0");
+					spvTCList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.5.SourceIPMask",
+					"string:255.0.0.0");
+					spvTCList.put("InternetGatewayDevice.ManagementServer.URL",
+					"string:http://10.243.156.120:57023/Amis/WGCPEMgt");
+					spvTCList.put("InternetGatewayDevice.ManagementServer.Username", "string:administrator");
+					spvTCList.put("InternetGatewayDevice.ManagementServer.Password", "string:EpC71249HgUH16KX9821Lu");
+					soapResponse = acsMethods.setParameterValues(spvTCList, cwmpSessionID);
+				// } else if (productClass.equals("R3621-W2")) {
+				// 	soapResponse = acsMethods.setParameterValues(spvSetACSList, cwmpSessionID);
+				// 	// soapResponse = acsMethods.reboot(sessionID);
+				} else if (productClass.equals("IAD")) {
+					spvSetACSList.put("InternetGatewayDevice.ManagementServer.Username", "string:administrator");
+					spvSetACSList.put("InternetGatewayDevice.ManagementServer.Password", "string:EpC71249HgUH16KX9821Lu");
+					soapResponse = acsMethods.setParameterValues(spvSetACSList, cwmpSessionID);
 					// soapResponse = acsMethods.reboot(sessionID);
 				} else {
-					soapResponse = acsMethods.setParameterValues(spvList, cwmpSessionID);
+					// All other devices which are not from Thompson/Techicolor
+					soapResponse = acsMethods.setParameterValues(spvSetACSList, cwmpSessionID);
 				}
 				OutputStream respOut = response.getOutputStream();
 				soapResponse.writeTo(respOut);
@@ -128,17 +138,25 @@ public class DeviceListenServlet extends HttpServlet {
 				// } else if (sessionID != "" && !session.isNew() &&
 				// responseType.equals("GetParameterValuesResponse")) {
 			} else if (cwmpSessionID != "" && !session.isNew() && responseType.equals("SetParameterValuesResponse")) {
-				response.setStatus(HttpStatus.OK_200);
-				request.getSession(false);
-				if (session != null) {
-					session.invalidate();
+
+				String logString = cwmpSessionID + ":" + responseType;
+				if (!OUI.isEmpty() || !productClass.isEmpty()) {
+					logString += " from: \"" + OUI + " - " + productClass + "\"";
 				}
+				context.log(logPrefix + logString);
+
+				response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+				request.getSession(false);
 			} else if (cwmpSessionID != "" && !session.isNew() && responseType.equals("RebootResponse")) {
-				response.setStatus(HttpStatus.OK_200);
-				request.getSession(false);
-				if (session != null) {
-					session.invalidate();
+				
+				String logString = cwmpSessionID + ":" + responseType;
+				if (!OUI.isEmpty() || !productClass.isEmpty()) {
+					logString += " from: \"" + OUI + " - " + productClass + "\"";
 				}
+				context.log(logPrefix + logString);
+				
+				response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+				request.getSession(false);
 			} else {
 				return;
 			}
