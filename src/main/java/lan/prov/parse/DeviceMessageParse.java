@@ -25,15 +25,18 @@ public class DeviceMessageParse {
 
 	public DeviceMessageParse() {
 	}
+	
+	public DeviceMessageParse(SOAPMessage soapMessage) {
+		this.soapMessage = soapMessage;
+		parseSOAPMessage(soapMessage);
+	}
 
 	public DeviceMessageParse(HttpServletRequest request) {
 		this.soapMessage = getSOAPMessage(request);
+		parseSOAPMessage(soapMessage);
 	}
 
 	public String getSessionID() {
-		if (sessionID == "") {
-			sessionID = parseSOAPMessage(soapMessage);
-		}
 		return sessionID;
 	}
 
@@ -95,20 +98,22 @@ public class DeviceMessageParse {
 		return "";
 	}
 	
-	public String parseSOAPMessage(SOAPMessage soapMessage) {
+	public void parseSOAPMessage(SOAPMessage soapMessage) {
 		if (soapMessage == null) {
-			return "";
+			return;
 		}
 		try {
 			SOAPHeader soapHead = soapMessage.getSOAPHeader();
 			sessionID = soapHead.getTextContent();
 			SOAPBody soapBody = soapMessage.getSOAPBody();
-			Node element = soapBody.getFirstChild();
-			if (element.getNextSibling() != null) {
-				responseType = element.getNextSibling().getLocalName();
-			} else {
-				return "";
-			}
+//			Node element = soapBody.getFirstChild();
+//			if (element.getNextSibling() != null) {
+//				responseType = element.getNextSibling().getLocalName();
+//			} else {
+//				return "";
+//			}
+			NodeList cwmpResponse = soapBody.getElementsByTagNameNS("urn:dslforum-org:cwmp-1-0", "*");
+			responseType = cwmpResponse.item(0).getLocalName();
 			if (responseType.equals("Inform")) {
 				NodeList nlProductClass = soapBody.getElementsByTagName("ProductClass");
 				Node nProductclass = nlProductClass.item(0);
@@ -123,11 +128,9 @@ public class DeviceMessageParse {
 				String sSerialNumber = nSerialNumber != null ? nSerialNumber.getTextContent() : "";
 				setSerialNumber(sSerialNumber);
 			}
-			return sessionID;
 		} catch (SOAPException ex) {
 			ex.printStackTrace();
 		}
-		return "";
 	}
 
 }

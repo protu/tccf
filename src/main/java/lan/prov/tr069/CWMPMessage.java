@@ -63,7 +63,7 @@ public class CWMPMessage {
 
 	public SOAPElement parameterValueStruct(String Name, String Value, String Type) throws SOAPException {
 		SOAPFactory soapFactory = SOAPFactory.newInstance();
-		SOAPElement pvs = soapFactory.createElement("ParamterValueStruct");
+		SOAPElement pvs = soapFactory.createElement("ParameterValueStruct");
 		pvs.addChildElement("Name").setValue(Name);
 		SOAPElement value = pvs.addChildElement("Value");
 		value.addAttribute(getQnXsiType(), Type);

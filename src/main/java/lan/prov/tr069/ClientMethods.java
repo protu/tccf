@@ -3,6 +3,9 @@ package lan.prov.tr069;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPMessage;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import lan.prov.client.GenericDevice;
@@ -16,25 +19,25 @@ public class ClientMethods extends CWMPMessage {
 		SOAPBody soapBody = informMessage.getSOAPBody();
 		SOAPElement inform = soapBody.addChildElement("Inform", "cwmp");
 		
-		SOAPElement deviceID = inform.addChildElement("DeviceID");
+		SOAPElement deviceID = inform.addChildElement("DeviceId");
 		deviceID.addChildElement("Manufacturer").setValue(device.getManufacturer());
 		deviceID.addChildElement("OUI").setValue(device.getOUI());
 		deviceID.addChildElement("ProductClass").setValue(device.getProductClass());
 		deviceID.addChildElement("SerialNumber").setValue(device.getSerialNumber());
 		
 		SOAPElement event = inform.addChildElement("Event");
-		event.addAttribute(getQnXsiType(), "soap-enc:Array");
+//		event.addAttribute(getQnXsiType(), "soap-enc:Array");
 		event.addAttribute(getQnSoapEncArrayType(), "cwmp:EventStruct[1]");
 		
 		SOAPElement eventStruct = event.addChildElement("EventStruct");
 		eventStruct.addChildElement("EventCode").setValue("2 PERIODIC");
 		eventStruct.addChildElement("CommandKey");
 		inform.addChildElement("MaxEnvelopes").setValue("1");
-		inform.addChildElement("LocalTime").setValue((new Date()).toString());
+		inform.addChildElement("CurrentTime").setValue(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
 		inform.addChildElement("RetryCount").setValue("0");
 		
 		SOAPElement parameterList = inform.addChildElement("ParameterList");
-		parameterList.addAttribute(getQnXsiType(), "soap-enc:Array");
+//		parameterList.addAttribute(getQnXsiType(), "soap-enc:Array");
 		parameterList.addAttribute(getQnSoapEncArrayType(), "cwmp:ParameterValueStruct[8]");
 		parameterList.addChildElement(parameterValueStruct("InternetGatewayDevice.DeviceSummary", device.getDeviceSummary(), "xsd:string"));
 		parameterList.addChildElement(parameterValueStruct("InternetGatewayDevice.DeviceInfo.SpecVersion", device.getSpecVersion(), "xsd:string"));
