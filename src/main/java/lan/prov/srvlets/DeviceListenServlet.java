@@ -47,7 +47,7 @@ public class DeviceListenServlet extends HttpServlet {
 
 			if (cwmpSessionID != "" && session.isNew() && responseType.equals("Inform")) {
 				
-				String logString = cwmpSessionID + ":" + responseType;
+				String logString = cwmpSessionID + ": " + responseType;
 				if (!OUI.isEmpty() || !productClass.isEmpty() || !serialNumber.isEmpty()) {
 					logString += " from: \"" + OUI + "-" + productClass + "-" + serialNumber + "\"";
 				}
@@ -56,7 +56,7 @@ public class DeviceListenServlet extends HttpServlet {
 				session.setAttribute("cwmpSessionID", cwmpSessionID);
 				session.setAttribute("productClass", productClass);
 				session.setAttribute("OUI", OUI);
-				session.setAttribute("SerialNumber", serialNumber);
+				session.setAttribute("serialNumber", serialNumber);
 				response.setContentType("text/xml; charset=utf-8");
 				soapResponse = acsMethods.informResponse(cwmpSessionID);
 				OutputStream respOut = response.getOutputStream();
@@ -68,11 +68,12 @@ public class DeviceListenServlet extends HttpServlet {
 
 				cwmpSessionID = (String) session.getAttribute("cwmpSessionID");
 				productClass = (String) session.getAttribute("productClass");
+				serialNumber = (String) session.getAttribute("serialNumber");
 				OUI = (String) session.getAttribute("OUI");
 
-				String logString = cwmpSessionID;
+				String logString = cwmpSessionID + ": ";
 				if (!OUI.isEmpty() || !productClass.isEmpty() || !serialNumber.isEmpty()) {
-					logString += " from: \"" + OUI + "-" + productClass + "-" + serialNumber + "\"";
+					logString += "connect from: \"" + OUI + "-" + productClass + "-" + serialNumber + "\"";
 				}
 				context.log(logPrefix + logString);
 				
@@ -125,7 +126,12 @@ public class DeviceListenServlet extends HttpServlet {
 				soapResponse.writeTo(respOut);
 			} else if (cwmpSessionID != "" && !session.isNew() && responseType.contains("Response")) {
 				
-				String logString = cwmpSessionID + ":" + responseType;
+				cwmpSessionID = (String) session.getAttribute("cwmpSessionID");
+				productClass = (String) session.getAttribute("productClass");
+				serialNumber = (String) session.getAttribute("serialNumber");
+				OUI = (String) session.getAttribute("OUI");
+
+				String logString = cwmpSessionID + ": " + responseType;
 				if (!OUI.isEmpty() || !productClass.isEmpty() || !serialNumber.isEmpty()) {
 					logString += " from: \"" + OUI + "-" + productClass + "-" + serialNumber + "\"";
 				}
