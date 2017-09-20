@@ -97,6 +97,8 @@ public class DeviceListenServlet extends HttpServlet {
 				spvSetACSList.put("InternetGatewayDevice.ManagementServer.PeriodicInformInterval",
 						"unsignedInt:120");
 				if (productClass.equals("SpeedTouch 780")) {
+					spvTCList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.5.SourceIP", "string:10.0.0.0");
+					spvTCList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.5.SourceIPMask", "string:255.0.0.0");
 					spvTCList.put("InternetGatewayDevice.ManagementServer.URL",
 							"string:http://10.243.156.120:7023/Amis/CPEMgt");
 					soapResponse = acsMethods.setParameterValues(spvTCList, cwmpSessionID);
@@ -110,8 +112,7 @@ public class DeviceListenServlet extends HttpServlet {
 					soapResponse = acsMethods.setParameterValues(spvTCList, cwmpSessionID);
 				} else if (productClass.equals("MediaAccess TG788vn v2")) {
 					spvTCList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.5.SourceIP", "string:10.0.0.0");
-					spvTCList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.5.SourceIPMask",
-					"string:255.0.0.0");
+					spvTCList.put("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.5.SourceIPMask", "string:255.0.0.0");
 					spvTCList.put("InternetGatewayDevice.ManagementServer.URL",
 					"string:http://10.243.156.120:57023/Amis/WGCPEMgt");
 					spvTCList.put("InternetGatewayDevice.ManagementServer.Username", "string:administrator");
