@@ -23,7 +23,7 @@ public class SoapClient {
 			
 			SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
 			SOAPConnection soapConnection = soapConnectionFactory.createConnection();
-			URL endpoint = new URL("http://localhost:10301/acs/croatia/ULL");
+			URL endpoint = new URL("http://localhost:10301/acs/croatia/BS");
 //			URL endpoint = new URL("http://localhost:8080/TccfServer/Acs");
 			SOAPMessage response = soapConnection.call(soapMessage, endpoint);
 			soapConnection.close();

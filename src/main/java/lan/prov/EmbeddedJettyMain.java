@@ -33,7 +33,7 @@ public class EmbeddedJettyMain {
 		ServletContextHandler handler = new ServletContextHandler(server, "/");
 		SessionHandler sessionHandler = new SessionHandler();
 		handler.setSessionHandler(sessionHandler);
-		handler.addServlet(DeviceListenServlet.class, "/acs/croatia/ULL");
+		handler.addServlet(DeviceListenServlet.class, "/acs/croatia/*");
 
 		server.start();
 		server.dumpStdErr();
