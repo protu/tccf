@@ -102,6 +102,16 @@ public class DeviceListenServlet extends HttpServlet {
 					spvTCList.put("InternetGatewayDevice.ManagementServer.URL",
 							"string:http://10.243.156.120:7023/Amis/CPEMgt");
 					soapResponse = acsMethods.setParameterValues(spvTCList, cwmpSessionID);
+				} else if (productClass.equals("Thomson TG782") && serialNumber.equals("CP1027NT65R")) {
+					spvTCList.remove("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.3.SourceIP");
+					spvTCList.remove("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.3.SourceIPMask");
+					spvTCList.remove("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.4.SourceIP");
+					spvTCList.remove("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.4.SourceIPMask");
+					spvTCList.remove("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.6.SourceIP");
+					spvTCList.remove("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.6.SourceIPMask");
+					spvTCList.put("InternetGatewayDevice.ManagementServer.URL",
+							"string:http://10.243.156.120:57023/Amis/WGCPEMgt");
+					soapResponse = acsMethods.setParameterValues(spvTCList, cwmpSessionID);
 				} else if (productClass.equals("Thomson TG782")) {
 					spvTCList.remove("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.3.SourceIP");
 					spvTCList.remove("InternetGatewayDevice.X_000E50_Firewall.Chain.4.Rule.3.SourceIPMask");
