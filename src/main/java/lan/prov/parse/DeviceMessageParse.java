@@ -2,14 +2,21 @@ package lan.prov.parse;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 
+import javax.management.RuntimeErrorException;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.crypto.dsig.TransformException;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -67,6 +74,17 @@ public class DeviceMessageParse {
 	public void setSerialNumber(String serialNumber) {
 		SerialNumber = serialNumber;
 	}
+	
+	public String getTextMessage() {
+		StringWriter stringWriter = new StringWriter();
+		try {
+			TransformerFactory.newInstance().newTransformer().transform(new DOMSource(soapMessage.getSOAPPart()), new StreamResult(stringWriter));
+		}
+		catch (TransformerException transformException) {
+			throw new RuntimeException(transformException);
+		}
+		return stringWriter.toString();
+	}
 
 	private SOAPMessage getSOAPMessage(HttpServletRequest request) {
 
@@ -112,7 +130,8 @@ public class DeviceMessageParse {
 //			} else {
 //				return "";
 //			}
-			NodeList cwmpResponse = soapBody.getElementsByTagNameNS("urn:dslforum-org:cwmp-1-0", "*");
+//			NodeList cwmpResponse = soapBody.getElementsByTagNameNS("urn:dslforum-org:cwmp-1-0", "*");
+			NodeList cwmpResponse = soapBody.getElementsByTagNameNS("urn:dslforum-org:cwmp-1-2", "*");
 			responseType = cwmpResponse.item(0).getLocalName();
 			if (responseType.equals("Inform")) {
 				NodeList nlProductClass = soapBody.getElementsByTagName("ProductClass");

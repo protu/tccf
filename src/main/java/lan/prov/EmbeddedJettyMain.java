@@ -29,11 +29,11 @@ public class EmbeddedJettyMain {
 			System.out.println(e.getMessage());
 		}
 
-		Server server = new Server(10301);
+		Server server = new Server(7005);
 		ServletContextHandler handler = new ServletContextHandler(server, "/");
 		SessionHandler sessionHandler = new SessionHandler();
 		handler.setSessionHandler(sessionHandler);
-		handler.addServlet(DeviceListenServlet.class, "/acs/croatia/*");
+		handler.addServlet(DeviceListenServlet.class, "/cwmp");
 
 		server.start();
 		server.dumpStdErr();

@@ -40,7 +40,7 @@ public class ACSMethodsTest {
 	public void SPVMethodTest() throws Exception {
 		SOAPMessage spvMessage = acsMethods.setParameterValues(getSPVList(), "test-session");
 		String message = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" "
-				+ "xmlns:cwmp=\"urn:dslforum-org:cwmp-1-0\" "
+				+ "xmlns:cwmp=\"urn:dslforum-org:cwmp-1-2\" "
 				+ "xmlns:soap-enc=\"http://schemas.xmlsoap.org/soap/encoding/\" "
 				+ "xmlns:soap-env=\"http://schemas.xmlsoap.org/soap/envelope/\" "
 				+ "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
@@ -110,7 +110,7 @@ public class ACSMethodsTest {
 				+ "</SOAP-ENV:Envelope>";
 		
 		String message1 = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" "
-				+ "xmlns:cwmp=\"urn:dslforum-org:cwmp-1-0\" "
+				+ "xmlns:cwmp=\"urn:dslforum-org:cwmp-1-2\" "
 				+ "xmlns:soap-enc=\"http://schemas.xmlsoap.org/soap/encoding/\" "
 				+ "xmlns:soap-env=\"http://schemas.xmlsoap.org/soap/envelope/\" "
 				+ "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "

@@ -46,7 +46,8 @@ public class CWMPMessage {
 
 		// SOAP Envelope
 		SOAPEnvelope envelope = soapPart.getEnvelope();
-		envelope.addNamespaceDeclaration("cwmp", "urn:dslforum-org:cwmp-1-0");
+		envelope.addNamespaceDeclaration("cwmp", "urn:dslforum-org:cwmp-1-2");
+//		envelope.addNamespaceDeclaration("cwmp", "urn:dslforum-org:cwmp-1-0");
 		envelope.addNamespaceDeclaration("xsi", "http://www.w3.org/2001/XMLSchema-instance");
 		envelope.addNamespaceDeclaration("xsd", "http://www.w3.org/2001/XMLSchema");
 		envelope.addNamespaceDeclaration("soap-env", "http://schemas.xmlsoap.org/soap/envelope/");

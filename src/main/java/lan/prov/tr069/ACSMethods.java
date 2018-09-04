@@ -46,7 +46,8 @@ public class ACSMethods {
 
 		// SOAP Envelope
 		SOAPEnvelope envelope = soapPart.getEnvelope();
-		envelope.addNamespaceDeclaration("cwmp", "urn:dslforum-org:cwmp-1-0");
+//		envelope.addNamespaceDeclaration("cwmp", "urn:dslforum-org:cwmp-1-0");
+		envelope.addNamespaceDeclaration("cwmp", "urn:dslforum-org:cwmp-1-2");
 		envelope.addNamespaceDeclaration("xsi", "http://www.w3.org/2001/XMLSchema-instance");
 		envelope.addNamespaceDeclaration("xsd", "http://www.w3.org/2001/XMLSchema");
 		envelope.addNamespaceDeclaration("soap-env", "http://schemas.xmlsoap.org/soap/envelope/");
@@ -54,7 +55,8 @@ public class ACSMethods {
 
 		// SOAP Header
 		SOAPHeader header = envelope.getHeader();
-		SOAPHeaderElement id = header.addHeaderElement(new QName("urn:dslforum-org:cwmp-1-0", "ID", "cwmp"));
+//		SOAPHeaderElement id = header.addHeaderElement(new QName("urn:dslforum-org:cwmp-1-0", "ID", "cwmp"));
+		SOAPHeaderElement id = header.addHeaderElement(new QName("urn:dslforum-org:cwmp-1-2", "ID", "cwmp"));
 		id.setMustUnderstand(true);
 		id.setValue(sessionID);
 
@@ -86,7 +88,7 @@ public class ACSMethods {
 		SOAPMessage soapMessage = genericMessage(sessionID);
 		SOAPBody soapBody = soapMessage.getSOAPBody();
 		SOAPElement gpv = soapBody.addChildElement("GetParameterValues", "cwmp");
-		SOAPElement parameterValues = gpv.addChildElement("ParameterValues");
+		SOAPElement parameterValues = gpv.addChildElement("ParameterNames");
 		parameterValues.addAttribute(qnSoapEncArrayType, "xsd:string[1]");
 		parameterValues.addChildElement("string").setValue(parameter);
 
