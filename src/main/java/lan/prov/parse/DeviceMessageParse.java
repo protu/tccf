@@ -29,6 +29,7 @@ public class DeviceMessageParse {
 	private String OUI = "";
 	private String SerialNumber = "";
 	private String sessionID = "";
+	private String soapTextMessage = "";
 
 	public DeviceMessageParse() {
 	}
@@ -75,7 +76,11 @@ public class DeviceMessageParse {
 		SerialNumber = serialNumber;
 	}
 	
-	public String getTextMessage() {
+	public String getSOAPTextMessage() {
+		return soapTextMessage;
+	}
+	
+	private void setSOAPTextMessage(SOAPMessage soapMessage) {
 		StringWriter stringWriter = new StringWriter();
 		try {
 			TransformerFactory.newInstance().newTransformer().transform(new DOMSource(soapMessage.getSOAPPart()), new StreamResult(stringWriter));
@@ -83,7 +88,7 @@ public class DeviceMessageParse {
 		catch (TransformerException transformException) {
 			throw new RuntimeException(transformException);
 		}
-		return stringWriter.toString();
+		soapTextMessage = stringWriter.toString();
 	}
 
 	private SOAPMessage getSOAPMessage(HttpServletRequest request) {
@@ -147,6 +152,8 @@ public class DeviceMessageParse {
 				String sSerialNumber = nSerialNumber != null ? nSerialNumber.getTextContent() : "";
 				setSerialNumber(sSerialNumber);
 			}
+			setSOAPTextMessage(soapMessage);
+			
 		} catch (SOAPException ex) {
 			ex.printStackTrace();
 		}

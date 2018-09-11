@@ -40,7 +40,7 @@ public class DeviceListenServlet extends HttpServlet {
 			String productClass = deviceMessageParse.getProductClass();
 			String OUI = deviceMessageParse.getOUI();
 			String serialNumber = deviceMessageParse.getSerialNumber();
-//			String soapTextMessage = deviceMessageParse.getTextMessage();
+			String soapTextMessage = deviceMessageParse.getSOAPTextMessage();
 			ACSMethods acsMethods = new ACSMethods();
 			SOAPMessage soapResponse = null;
 
@@ -51,7 +51,7 @@ public class DeviceListenServlet extends HttpServlet {
 					logString += " from: \"" + OUI + "-" + productClass + "-" + serialNumber + "\"";
 				}
 				context.log(logPrefix + logString);
-//				context.log(logPrefix + soapTextMessage);
+				context.log(logPrefix + soapTextMessage);
 
 				session.setAttribute("cwmpSessionID", cwmpSessionID);
 				session.setAttribute("productClass", productClass);
@@ -62,7 +62,7 @@ public class DeviceListenServlet extends HttpServlet {
 				OutputStream respOut = response.getOutputStream();
 				soapResponse.writeTo(respOut);
 				// Postoji HTTP sesija ali je prazan SOAP sesionID - vraćen je
-				// prazan odgovor na inform response i mogu se posaviti
+				// prazan odgovor na inform response i mogu se postaviti
 				// parametri
 			} else if (cwmpSessionID == "" && !session.isNew()) {
 
@@ -76,12 +76,13 @@ public class DeviceListenServlet extends HttpServlet {
 					logString += "connect from: \"" + OUI + "-" + productClass + "-" + serialNumber + "\"";
 				}
 				context.log(logPrefix + logString);
-//				context.log(logPrefix + soapTextMessage);
+				context.log(logPrefix + soapTextMessage);
 				
 				response.setContentType("text/xml; charset=utf-8");
 				soapResponse = acsMethods.getParameterValues("InternetGatewayDevice.", cwmpSessionID);
 				OutputStream respOut = response.getOutputStream();
 				soapResponse.writeTo(respOut);
+				// Došao je odgovor modema (Response). Stavi ga u log i prekini sesiju.
 			} else if (cwmpSessionID != "" && !session.isNew() && responseType.contains("Response")) {
 
 				cwmpSessionID = (String) session.getAttribute("cwmpSessionID");
@@ -94,7 +95,7 @@ public class DeviceListenServlet extends HttpServlet {
 					logString += " from: \"" + OUI + "-" + productClass + "-" + serialNumber + "\"";
 				}
 				context.log(logPrefix + logString);
-//				context.log(logPrefix + soapTextMessage);
+				context.log(logPrefix + soapTextMessage);
 
 				response.setStatus(HttpServletResponse.SC_NO_CONTENT);
 				request.getSession(false);

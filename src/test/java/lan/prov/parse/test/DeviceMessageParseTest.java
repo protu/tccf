@@ -26,9 +26,9 @@ public class DeviceMessageParseTest {
 		try {
 			soapMessage = clientMethods.clientPeriodicInform(device);
 			parseMsg = new DeviceMessageParse(soapMessage);
-//			OutputStream output = new ByteArrayOutputStream();
-//			soapMessage.writeTo(output);
-//			System.out.println(output.toString());
+			OutputStream output = new ByteArrayOutputStream();
+			soapMessage.writeTo(output);
+			System.out.println(output.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
