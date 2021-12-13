@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 
 import javax.management.RuntimeErrorException;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import javax.xml.crypto.dsig.TransformException;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
